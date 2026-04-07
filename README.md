@@ -54,8 +54,6 @@ func void HelloWorld() [
 - **void**: 占位符。表示无类型、无返回值，或配合 `ptr` 指向任意内存。
 - **func**: 函数声明关键字。
 
-- func: 定义函数
-
 ### 返回:
 - ret: 只设置返回值
 - return: 立刻返回
