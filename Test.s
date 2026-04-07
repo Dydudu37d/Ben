@@ -1,0 +1,86 @@
+.section .data
+var_a: .double 3000.2
+.code64
+.section .text
+.global _start
+
+.extern GetStdHandle
+.extern WriteConsoleA
+_Print:
+
+        pushq %rbp
+        movq %rsp, %rbp
+        subq $48, %rsp          
+
+        # 保护：把 RCX (字符串地址) 存到栈里 (RSP+40)
+        movq %rcx, 40(%rsp)     
+
+        movl $-11, %ecx         
+        call GetStdHandle       # 执行完后，R10 可能已经变了
+        movq %rax, %rcx         
+
+        # 恢复：从栈里把地址取回来给 RDX
+        movq 40(%rsp), %rdx      
+        
+        # 计算长度时也用这个从栈里拿回来的地址
+        movq %rdx, %r11
+        xorq %r8, %r8
+    .L_PRN_LEN:
+        cmpb $0, (%r11, %r8)
+        je .L_PRN_DONE
+        incq %r8
+        jmp .L_PRN_LEN
+    .L_PRN_DONE:
+        # 参数3: R8 已经是长度
+        xorq %r9, %r9           # 参数4: lpNumberOfCharsWritten = NULL
+        movq $0, 32(%rsp)       # 参数5: 第五个参数在栈的影子空间上方
+        call WriteConsoleA
+
+        addq $48, %rsp
+        popq %rbp
+        ret
+    
+
+_PutChar:
+
+        pushq %rbp
+        movq %rsp, %rbp
+        subq $48, %rsp
+    
+        # 必须在 call 之前存，因为 call 会破坏 %cl (即 %rcx 的低位)
+        movb %cl, 40(%rsp)      
+
+        movl $-11, %ecx
+        call GetStdHandle
+        
+        # 准备 WriteConsoleA
+        movq %rax, %rcx         # 参数1: Handle
+        leaq 40(%rsp), %rdx     # 参数2: 字符所在的内存地址
+        movq $1, %r8            # 参数3: 长度固定为 1
+        xorq %r9, %r9           # 参数4
+        movq $0, 32(%rsp)       # 参数5
+        call WriteConsoleA
+
+        addq $48, %rsp
+        popq %rbp
+        ret
+    
+
+_start:
+    subq $48, %rsp
+.section .data
+str_0: .asciz "Hello"
+.section .text
+    leaq str_0(%rip), %rcx
+    call _Print
+    movq $10, %rcx
+    call _PutChar
+    movq $97, %rcx
+    call _PutChar
+    movq $10, %rcx
+    call _PutChar
+    movq $10, %rcx
+    call _PutChar
+    xorq %rax, %rax
+    addq $48, %rsp
+    ret

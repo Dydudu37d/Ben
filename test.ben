@@ -1,0 +1,9 @@
+import std/Stdio.ben;
+
+num a = 1000.1+2000.1;
+
+Print "Hello";
+PutChar '\n';
+PutChar 'a';
+PutChar '\n';
+PutChar '\n';
