@@ -38,18 +38,19 @@ func void HelloWorld() [
 
 ## 如何入门:
 
-### 类型:
-- char: 8位数字 .byte
-- long: 64位数字 .quad
-- num: 任意数字 (要省内存的话不建议使用,因为默认double) .double
-- int: 32位数字 .long
-- double: 64位双精度浮点数 .double
-- float: 32位单精度浮点数 .float
+### 类型与内存映射:
+- **char**:   8位数字  `[.byte]`
+- **int**:    32位数字 `[.long]`
+- **long**:   64位数字 `[.quad]`
+- **float**:  32位单精度浮点数 `[.float]`
+- **double**: 64位双精度浮点数 `[.double]`
+- **num**:    通用数字 (默认 double, 不建议在内核高频使用) `[.double]`
 
 ### 修饰符:
-- unsigned: 无符号数
-- const: 只读
-- void: 函数/任意类型
+- **unsigned**: 无符号正数。解放最高位符号位，扩大正数表达范围 (0~2^n-1)。处理内存地址 (ptr) 和硬件寄存器时的首选。
+- **const**: 只读标记。防止变量在编译期被重新赋值。
+- **void**: 占位符。表示无类型、无返回值，或配合 `ptr` 指向任意内存。
+- **func**: 函数声明关键字。
 
 - func: 定义函数
 
